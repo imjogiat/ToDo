@@ -1,12 +1,34 @@
 import os
 import FreeSimpleGUI as sg
+import ToDoFunctions
 
 prompt = sg.Text("Type in a To Do item: ")
-input_box = sg.InputText(tooltip="Enter a todo item")
+input_box = sg.InputText(tooltip="Enter a todo item", key='todo_item')
 add_button = sg.Button("Add")
 
-window = sg.Window('My To Do App', layout=[[prompt],[input_box, add_button]])
-window.read()
+
+window = sg.Window('My To Do App', 
+                   layout=[[prompt],
+                            [input_box, add_button]],
+                    font=('Helvetica', 20))
+
+while True:
+    event, value = window.read()
+    print(event)
+    print(value)
+
+    match event:
+
+        case 'Add':
+            todo_list = ToDoFunctions.get_todos()
+            new_todo = value['todo_item'] + "\n"
+            todo_list.append(new_todo)
+            ToDoFunctions.write_todos(todo_list)
+        
+        case sg.WIN_CLOSED:
+            break
+        
+
 window.close()
 
 
