@@ -1,16 +1,33 @@
 import os
 import FreeSimpleGUI as sg
-import ToDoFunctions
+import ToDoFunctions as ftns
 
 prompt = sg.Text("Type in a To Do item: ")
+
+#creating the 'Add' functionality of application
 input_box = sg.InputText(tooltip="Enter a todo item", key='todo_item')
 add_button = sg.Button("Add")
 
+#creating elements for the GUI to display todo items, will add edit button on the side
+todo_display = sg.Listbox(ftns.get_todos(),
+                          size= (30,70),
+                          key='todo_lbox',
+                          enable_events=True)
 
+#creating Edit button
+edit_button = sg.Button("Edit")
+
+#creating Complete button
+complete_button = sg.Button("Complete")
+
+#creating the window object that creates the window of the web gui for the application
 window = sg.Window('My To Do App', 
                    layout=[[prompt],
-                            [input_box, add_button]],
-                    font=('Helvetica', 20))
+                            [input_box],
+                            [add_button, edit_button, complete_button],
+                            [todo_display]],
+                    font=('Helvetica', 20),
+                    size=(400,600))
 
 while True:
     event, value = window.read()
@@ -20,11 +37,41 @@ while True:
     match event:
 
         case 'Add':
-            todo_list = ToDoFunctions.get_todos()
+            todo_list = ftns.get_todos()
             new_todo = value['todo_item'] + "\n"
             todo_list.append(new_todo)
-            ToDoFunctions.write_todos(todo_list)
+            ftns.write_todos(todo_list)
+
+            #Updates the window gui list box element with the new todo list
+            window['todo_lbox'].update(values=todo_list)
         
+
+        case 'Edit':
+            todo_list = ftns.get_todos()
+            old_todo = value['todo_lbox'][0]
+            new_todo = value['todo_item']+"\n"
+
+            # old_todo = old_todo.strip('\n')
+
+            index = todo_list.index(old_todo)
+            todo_list[index] = new_todo
+
+            ftns.write_todos(todo_list)
+
+            #Updates the window gui list box element with the new todo list
+            window['todo_lbox'].update(values=todo_list)
+        
+
+        case 'Complete':
+            todo_list = ftns.get_todos()
+            removed_todo = value['todo_lbox'][0]
+            index = todo_list.index(removed_todo)
+            todo_list.pop(index)
+
+            ftns.write_todos(todo_list)
+            window['todo_lbox'].update(values=todo_list)
+
+
         case sg.WIN_CLOSED:
             break
         
@@ -32,81 +79,3 @@ while True:
 window.close()
 
 
-# while True:
-
-#     # new_todo_file = open('todos.txt','x')
-
-#     user_action = input("\nPlease enter the todo list item to add (Ex: Add To do item), or Show, Edit, Complete. Type Exit to quit.\n")
-#     user_actions_list = user_action.split(sep = " ", maxsplit = 1)
-
-#     user_action = user_actions_list[0]
-#     user_action = user_action.strip()
-#     user_action = user_action.title()
-
-
-#     with open('todos.txt','r') as prior_todo_file:
-#         todo_list = prior_todo_file.readlines()
-
-#     match user_action:
-
-#         case "Add":
-
-#             todo_item = f"{user_actions_list[1]}\n"
-
-#             # todo_item = input("Enter a to do list item:    ") + "\n"
-
-#             # todo_item = todo_item.strip(" ")
-#             todo_list.append(todo_item)
-
-#             with open('todos.txt','w') as todofile:
-#                 todofile.writelines(todo_list)
-
-#             # print(f"{os.getcwd()}{os.sep}todos.txt")
-#             #line to show a filepath of the directory where the code is being run        
-
-#         case "Show":
-
-#             # todo_list = [item.strip('\n') for item in todo_list]  
-#             #example of list comprehension (adds time complexity)
-
-#             print("\n To Do list:\n-----------------------------------------------")
-#             for i , item in enumerate(todo_list):
-#                 item.strip('\n')
-#                 item = item.title()
-#                 print(f"{i+1} - {item}")
-#             print("\n")
-
-
-#         case "Edit":
-#             user_number = int(input("\nEnter the number of the list item that you wish to edit\n"))
-#             item_index = user_number - 1
-#             current_todo_item = todo_list[item_index]
-#             print("\nyou have selected:  " + current_todo_item)
-
-#             new_todo_item = input("\nWhat would you like to replace that to-do list item with instead?\n") + "\n"
-#             todo_list[item_index] = new_todo_item
-
-#             with open('todos.txt','w') as todofile:
-#                 todofile.writelines(todo_list)
-
-            
-#         case "Complete":
-#             completed_index = int(input("Please enter the item number marked as complete. This item will be removed from the To Do list.\n"))
-#             to_remove = todo_list[completed_index-1].strip('\n')
-#             todo_list.pop(completed_index-1)
-
-#             with open('todos.txt','w') as todofile:
-#                 todofile.writelines(todo_list)
-
-#             print(f"The to do list item, {to_remove}, has been removed from the ToDo list")
-
-#         case "Exit":
-#             break
-        
-#         case _:
-#             print("\nInvalid entry, please try again\n")
-
-    
-# print("\n-----------------\nGoodbye!")
-
-# #comment
