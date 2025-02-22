@@ -5,7 +5,7 @@ import ToDoFunctions as ftns
 prompt = sg.Text("Type in a To Do item: ")
 
 #creating the 'Add' functionality of application
-input_box = sg.InputText(tooltip="Enter a todo item", key='todo_item')
+input_box = sg.InputText(tooltip="Enter a todo item", key='todo_entry')
 add_button = sg.Button("Add")
 
 #creating elements for the GUI to display todo items, will add edit button on the side
@@ -38,7 +38,7 @@ while True:
 
         case 'Add':
             todo_list = ftns.get_todos()
-            new_todo = value['todo_item'] + "\n"
+            new_todo = value['todo_entry'] + "\n"
             todo_list.append(new_todo)
             ftns.write_todos(todo_list)
 
@@ -49,7 +49,7 @@ while True:
         case 'Edit':
             todo_list = ftns.get_todos()
             old_todo = value['todo_lbox'][0]
-            new_todo = value['todo_item']+"\n"
+            new_todo = value['todo_entry']+"\n"
 
             # old_todo = old_todo.strip('\n')
 
@@ -71,6 +71,8 @@ while True:
             ftns.write_todos(todo_list)
             window['todo_lbox'].update(values=todo_list)
 
+        case 'todo_lbox':
+            window['todo_entry'].update(value=value['todo_lbox'][0])
 
         case sg.WIN_CLOSED:
             break
