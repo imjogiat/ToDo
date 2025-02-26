@@ -3,6 +3,17 @@ import FreeSimpleGUI as sg
 import ToDoFunctions as ftns
 import time
 
+
+#Problem- after creating executable- it runs for less than a second then closes
+
+
+#check if the file that we're writing the todo list to exists
+
+if not os.path.exists("/todos.txt"):
+    with open("/todos.txt", "w") as file:
+        pass
+
+
 clock = sg.Button("time")
 clock_display = sg.Text(" ", key="clock")
 
